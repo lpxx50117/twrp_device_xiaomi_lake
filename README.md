@@ -1,8 +1,8 @@
 # twrp_device_xiaomi_lake
  The TWRP device tree for Redmi 14C/POCO C75/Redmi A3 Pro(lake/pond)  
  Based on HyperOS 1.0.1.0.UGTMIXM, device tree port from boedhack99/device_xiaomi_zircon-TWRP  
- You should flash the original venodr_boot image from official fastboot package and install 
- current TWRP ramdisk to boot partition after entering TWRP main screen. Otherwise the system won't boot normally.  
+ You should flash the original vendor_boot image from official fastboot package and install 
+current TWRP ramdisk to boot partition after entering TWRP main screen. Otherwise the system won't boot normally.  
  Bugs:  
  touch screen, data decryption(stuck on TWRP logo), fastbootd mode.  
  Works:  
