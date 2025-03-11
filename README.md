@@ -11,7 +11,7 @@ current TWRP ramdisk to boot partition after entering TWRP main screen. Otherwis
  Build Steps:  
  repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1  
  repo sync  
- git clone https://github.com/lpxx50117/twrp_device_xiaomi_lake.git device/xiaomi/lake  
+ git clone -b alpha_20250227 https://github.com/lpxx50117/twrp_device_xiaomi_lake.git device/xiaomi/lake  
  . build/envsetup.sh  
  lunch twrp_lake-userdebug  
  mka vendorbootimage
