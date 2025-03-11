@@ -1,6 +1,7 @@
 import /vendor/etc/ueventd.rc
+import /odm/etc/ueventd.rc
 
-firmware_directories /etc/firmware/ /vendor/firmware/ /firmware/image/
+firmware_directories /etc/firmware/ /odm/firmware/ /vendor/firmware/ /firmware/image/
 uevent_socket_rcvbuf_size 16M
 
 subsystem graphics
@@ -66,8 +67,9 @@ subsystem dma_heap
 # CDMA radio interface MUX
 /dev/ppp                  0660   radio      vpn
 
-/dev/kvm                  0600   system     system
-/dev/vhost-vsock          0600   system	    system
+# Virtualisation is managed by Virt Manager
+/dev/kvm                  0600   virtmanager root
+/dev/vhost-vsock          0600   virtmanager root
 
 # sysfs properties
 /sys/devices/platform/trusty.*      trusty_version        0440  root   log

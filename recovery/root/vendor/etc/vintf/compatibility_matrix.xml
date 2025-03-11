@@ -4,6 +4,10 @@
 -->
 <compatibility-matrix version="4.0" type="device">
     <hal format="hidl" optional="false">
+        <name>android.frameworks.schedulerservice</name>
+        <version>1.0</version>
+    </hal>
+    <hal format="hidl" optional="false">
         <name>android.frameworks.sensorservice</name>
         <version>1.0</version>
     </hal>
@@ -27,17 +31,10 @@
         <name>android.system.wifi.keystore</name>
         <version>1.0</version>
     </hal>
-    <hal format="aidl" optional="true">
-        <name>vendor.mediatek.framework.mtksf_ext</name>
-        <interface>
-            <name>IMtkSF_ext</name>
-            <instance>default</instance>
-        </interface>
-    </hal>
     <vendor-ndk>
-        <version>33</version>
+        <version>31</version>
     </vendor-ndk>
     <system-sdk>
-        <version>33</version>
+        <version>31</version>
     </system-sdk>
 </compatibility-matrix>

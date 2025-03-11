@@ -1,23 +1,13 @@
-import /miteelog.rc
-import /tee-supplicant.rc
-
 on init
     setprop sys.usb.configfs 1
     setprop sys.usb.controller "musb-hdrc"
     setprop sys.usb.ffs.aio_compat 0
-    export LD_LIBRARY_PATH /system/lib64:/vendor/lib64:/vendor/lib64/hw
-    setprop crypto.ready 1
 
-on fs
-    install_keyring
-
-# We need vold early for metadata encryption
-on early-fs
-    start vold
-
-on late-fs
-    # Mount RW partitions which need run fsck
-    mount_all /first_stage_ramdisk/fstab.mt6768 --late
+on fs && property:ro.debuggable=0
+    # distinguish USB shoulde connect or not, i.e. CDP vs SDP
+    # write /sys/class/udc/musb-hdrc/device/cmode 2
+    # set charging free due to it wait for USB activation
+    start adbd
 
 on post-fs
     # Support A/B feature for EMMC and UFS boot region
@@ -29,90 +19,3 @@ on post-fs
     symlink /dev/block/mmcblk0boot1 /dev/block/by-name/preloader_b
 
     exec u:r:update_engine:s0 root root -- /system/bin/mtk_plpath_utils
-    start mtk.plpath.utils.link
-
-
-service mtk.plpath.utils.link /system/bin/mtk_plpath_utils
-    class main
-    user root
-    group root system
-    disabled
-    oneshot
-    seclabel u:r:recovery:s0
-
-service vendor.health-default /vendor/bin/hw/android.hardware.health-service.example_recovery
-    class hal
-    seclabel u:r:hal_health_default:s0
-    user system
-    group system
-    capabilities WAKE_ALARM BLOCK_SUSPEND
-    file /dev/kmsg w
-    seclabel u:r:recovery:s0
-
-service vendor.gatekeeper-1-0 /vendor/bin/hw/android.hardware.gatekeeper@1.0-service
-    interface android.hardware.gatekeeper@1.0::IGatekeeper default
-    user root
-    group root
-    disabled
-    seclabel u:r:recovery:s0
-
-service set_permissive /system/bin/set_permissive.sh
-    user root
-    group root
-    disabled
-    oneshot 
-    seclabel u:r:recovery:s0
-    
- service overrideprops /system/bin/overrideprops.sh
-    user root
-    group root
-    disabled
-    oneshot
-    seclabel u:r:recovery:s0
-
-service vendor.keymint-mitee /vendor/bin/hw/android.hardware.security.keymint@2.0-service.mitee
-    class early_hal
-    user root
-    group root drmrpc
-    disabled
-    seclabel u:r:recovery:s0
-
-on property:crypto.ready=1
-    start vendor.keymint-mitee
-
-on property:hwservicemanager.ready=true
-    start vendor.keymint-mitee
-    start vendor.gatekeeper-1-0
-
-on property:ro.crypto.state=unsupported
-    stop miteelog
-    stop tee-supplicant
-    stop vendor.keymint-mitee
-    stop vendor.gatekeeper-1-0
-
-on property:ro.crypto.state=unencrypted
-    stop miteelog
-    stop tee-supplicant
-    stop vendor.keymint-mitee
-    stop vendor.gatekeeper-1-0
-
-on property:twrp.decrypt.done=true
-    stop miteelog
-    stop tee-supplicant
-    stop vendor.keymint-mitee
-    stop vendor.gatekeeper-1-0
-
-on property:crypto.ready=0
-    stop miteelog
-    stop tee-supplicant
-    stop vendor.keymint-mitee
-    stop vendor.gatekeeper-1-0
-
-on property:twrp.modules.loaded=true
-    start vibratorfeature-hal-service
-
-on boot
-    start vendor.health-default
-#    start set_permissive
-#    start overrideprops
-    setprop sys.usb.config adb
